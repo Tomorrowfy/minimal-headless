@@ -29,10 +29,20 @@ const cartFragment = /* GraphQL */ `
               currencyCode
             }
           }
+          sellingPlanAllocation {
+            sellingPlan {
+              id
+              name
+            }
+          }
           merchandise {
             ... on ProductVariant {
               id
               title
+              price {
+                amount
+                currencyCode
+              }
               selectedOptions {
                 name
                 value

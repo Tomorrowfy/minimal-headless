@@ -55,6 +55,7 @@ import {
   ShopifyProductRecommendationsOperation,
   ShopifyProductsOperation,
   ShopifyRemoveFromCartOperation,
+  ShopifySellingPlanGroup,
   ShopifyUpdateCartOperation,
 } from "./types";
 
@@ -181,6 +182,17 @@ const reshapeImages = (images: Connection<Image>, productTitle: string) => {
   });
 };
 
+const reshapeSellingPlanGroups = (
+  sellingPlanGroups: Connection<ShopifySellingPlanGroup>,
+) => {
+  const flattenedGroups = removeEdgesAndNodes(sellingPlanGroups);
+
+  return flattenedGroups.map((group) => ({
+    ...group,
+    sellingPlans: removeEdgesAndNodes(group.sellingPlans),
+  }));
+};
+
 const reshapeProduct = (
   product: ShopifyProduct,
   filterHiddenProducts: boolean = true
@@ -192,12 +204,13 @@ const reshapeProduct = (
     return undefined;
   }
 
-  const { images, variants, ...rest } = product;
+  const { images, variants, sellingPlanGroups, ...rest } = product;
 
   return {
     ...rest,
     images: reshapeImages(images, product.title),
     variants: removeEdgesAndNodes(variants),
+    sellingPlanGroups: reshapeSellingPlanGroups(sellingPlanGroups),
   };
 };
 
@@ -226,7 +239,11 @@ export async function createCart(): Promise<Cart> {
 }
 
 export async function addToCart(
-  lines: { merchandiseId: string; quantity: number }[]
+  lines: {
+    merchandiseId: string;
+    quantity: number;
+    sellingPlanId?: string | null;
+  }[]
 ): Promise<Cart> {
   const cartId = (await cookies()).get("cartId")?.value!;
   const res = await shopifyFetch<ShopifyAddToCartOperation>({
@@ -253,7 +270,12 @@ export async function removeFromCart(lineIds: string[]): Promise<Cart> {
 }
 
 export async function updateCart(
-  lines: { id: string; merchandiseId: string; quantity: number }[]
+  lines: {
+    id: string;
+    merchandiseId: string;
+    quantity: number;
+    sellingPlanId?: string | null;
+  }[]
 ): Promise<Cart> {
   const cartId = (await cookies()).get("cartId")?.value!;
   const res = await shopifyFetch<ShopifyUpdateCartOperation>({

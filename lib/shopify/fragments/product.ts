@@ -41,6 +41,41 @@ const productFragment = /* GraphQL */ `
         }
       }
     }
+    sellingPlanGroups(first: 10) {
+      edges {
+        node {
+          name
+          sellingPlans(first: 10) {
+            edges {
+              node {
+                id
+                name
+                priceAdjustments {
+                  adjustmentValue {
+                    __typename
+                    ... on SellingPlanPercentagePriceAdjustment {
+                      adjustmentPercentage
+                    }
+                    ... on SellingPlanFixedAmountPriceAdjustment {
+                      adjustmentAmount {
+                        amount
+                        currencyCode
+                      }
+                    }
+                    ... on SellingPlanFixedPriceAdjustment {
+                      price {
+                        amount
+                        currencyCode
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     featuredImage {
       ...image
     }

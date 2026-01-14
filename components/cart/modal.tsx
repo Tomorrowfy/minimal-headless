@@ -1,8 +1,8 @@
 "use client";
 
-import clsx from "clsx";
 import { Dialog, Transition } from "@headlessui/react";
 import { ShoppingCartIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
 import LoadingDots from "components/loading-dots";
 import Price from "components/price";
 import { DEFAULT_OPTION } from "lib/constants";
@@ -95,8 +95,8 @@ export default function CartModal() {
                     {cart.lines
                       .sort((a, b) =>
                         a.merchandise.product.title.localeCompare(
-                          b.merchandise.product.title,
-                        ),
+                          b.merchandise.product.title
+                        )
                       )
                       .map((item, i) => {
                         const merchandiseSearchParams =
@@ -108,12 +108,12 @@ export default function CartModal() {
                               merchandiseSearchParams[name.toLowerCase()] =
                                 value;
                             }
-                          },
+                          }
                         );
 
                         const merchandiseUrl = createUrl(
                           `/product/${item.merchandise.product.handle}`,
-                          new URLSearchParams(merchandiseSearchParams),
+                          new URLSearchParams(merchandiseSearchParams)
                         );
 
                         return (
@@ -159,17 +159,41 @@ export default function CartModal() {
                                         {item.merchandise.title}
                                       </p>
                                     ) : null}
+                                    {item.sellingPlanAllocation?.sellingPlan
+                                      .name ? (
+                                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                        {
+                                          item.sellingPlanAllocation.sellingPlan
+                                            .name
+                                        }
+                                      </p>
+                                    ) : null}
                                   </div>
                                 </Link>
                               </div>
-                              <div className="flex h-16 flex-col justify-between">
-                                <Price
-                                  className="flex justify-end space-y-2 text-right text-sm"
-                                  amount={item.cost.totalAmount.amount}
-                                  currencyCode={
-                                    item.cost.totalAmount.currencyCode
-                                  }
-                                />
+                              <div className="flex h-16 flex-col justify-between gap-2">
+                                <div className="flex flex-col items-end text-right text-sm">
+                                  {item.sellingPlanAllocation?.sellingPlan
+                                    .id ? (
+                                    <Price
+                                      className="text-xs text-neutral-500 line-through dark:text-neutral-400"
+                                      amount={(
+                                        Number(item.merchandise.price.amount) *
+                                        item.quantity
+                                      ).toString()}
+                                      currencyCode={
+                                        item.cost.totalAmount.currencyCode
+                                      }
+                                    />
+                                  ) : null}
+                                  <Price
+                                    className="text-right text-sm"
+                                    amount={item.cost.totalAmount.amount}
+                                    currencyCode={
+                                      item.cost.totalAmount.currencyCode
+                                    }
+                                  />
+                                </div>
                                 <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
                                   <EditItemQuantityButton
                                     item={item}
@@ -234,7 +258,7 @@ function CloseCart({ className }: { className?: string }) {
       <XMarkIcon
         className={clsx(
           "h-6 transition-all ease-in-out hover:scale-110",
-          className,
+          className
         )}
       />
     </div>

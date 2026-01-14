@@ -25,9 +25,16 @@ export type CartItem = {
   cost: {
     totalAmount: Money;
   };
+  sellingPlanAllocation?: {
+    sellingPlan: {
+      id: string;
+      name: string;
+    };
+  } | null;
   merchandise: {
     id: string;
     title: string;
+    price: Money;
     selectedOptions: {
       name: string;
       value: string;
@@ -68,9 +75,13 @@ export type Page = {
   updatedAt: string;
 };
 
-export type Product = Omit<ShopifyProduct, "variants" | "images"> & {
+export type Product = Omit<
+  ShopifyProduct,
+  "variants" | "images" | "sellingPlanGroups"
+> & {
   variants: ProductVariant[];
   images: Image[];
+  sellingPlanGroups: SellingPlanGroup[];
 };
 
 export type ProductOption = {
@@ -128,11 +139,38 @@ export type ShopifyProduct = {
     minVariantPrice: Money;
   };
   variants: Connection<ProductVariant>;
+  sellingPlanGroups: Connection<ShopifySellingPlanGroup>;
   featuredImage: Image;
   images: Connection<Image>;
   seo: SEO;
   tags: string[];
   updatedAt: string;
+};
+
+export type SellingPlanPriceAdjustmentValue = {
+  __typename: string;
+  adjustmentPercentage?: number;
+  adjustmentAmount?: Money;
+  price?: Money;
+};
+
+export type SellingPlanPriceAdjustment = {
+  adjustmentValue: SellingPlanPriceAdjustmentValue;
+};
+
+export type SellingPlan = {
+  id: string;
+  name: string;
+  priceAdjustments: SellingPlanPriceAdjustment[];
+};
+
+export type SellingPlanGroup = {
+  name: string;
+  sellingPlans: SellingPlan[];
+};
+
+export type ShopifySellingPlanGroup = Omit<SellingPlanGroup, "sellingPlans"> & {
+  sellingPlans: Connection<SellingPlan>;
 };
 
 export type ShopifyCartOperation = {
@@ -159,6 +197,7 @@ export type ShopifyAddToCartOperation = {
     lines: {
       merchandiseId: string;
       quantity: number;
+      sellingPlanId?: string | null;
     }[];
   };
 };
@@ -187,6 +226,7 @@ export type ShopifyUpdateCartOperation = {
       id: string;
       merchandiseId: string;
       quantity: number;
+      sellingPlanId?: string | null;
     }[];
   };
 };

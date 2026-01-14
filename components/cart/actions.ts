@@ -14,21 +14,37 @@ import { redirect } from "next/navigation";
 
 export async function addItem(
   prevState: any,
-  selectedVariantId: string | undefined
+  payload: {
+    selectedVariantId: string | undefined;
+    sellingPlanId?: string | null;
+  }
 ) {
+  const { selectedVariantId, sellingPlanId } = payload;
+
   if (!selectedVariantId) {
     return "Error adding item to cart";
   }
 
   try {
-    await addToCart([{ merchandiseId: selectedVariantId, quantity: 1 }]);
+    await addToCart([
+      {
+        merchandiseId: selectedVariantId,
+        quantity: 1,
+        sellingPlanId,
+      },
+    ]);
     updateTag(TAGS.cart);
   } catch (e) {
     return "Error adding item to cart";
   }
 }
 
-export async function removeItem(prevState: any, merchandiseId: string) {
+export async function removeItem(
+  prevState: any,
+  payload: { merchandiseId: string; sellingPlanId?: string | null }
+) {
+  const { merchandiseId, sellingPlanId } = payload;
+
   try {
     const cart = await getCart();
 
@@ -37,7 +53,10 @@ export async function removeItem(prevState: any, merchandiseId: string) {
     }
 
     const lineItem = cart.lines.find(
-      (line) => line.merchandise.id === merchandiseId
+      (line) =>
+        line.merchandise.id === merchandiseId &&
+        (line.sellingPlanAllocation?.sellingPlan.id ?? null) ===
+          (sellingPlanId ?? null)
     );
 
     if (lineItem && lineItem.id) {
@@ -56,9 +75,10 @@ export async function updateItemQuantity(
   payload: {
     merchandiseId: string;
     quantity: number;
+    sellingPlanId?: string | null;
   }
 ) {
-  const { merchandiseId, quantity } = payload;
+  const { merchandiseId, quantity, sellingPlanId } = payload;
 
   try {
     const cart = await getCart();
@@ -68,7 +88,10 @@ export async function updateItemQuantity(
     }
 
     const lineItem = cart.lines.find(
-      (line) => line.merchandise.id === merchandiseId
+      (line) =>
+        line.merchandise.id === merchandiseId &&
+        (line.sellingPlanAllocation?.sellingPlan.id ?? null) ===
+          (sellingPlanId ?? null)
     );
 
     if (lineItem && lineItem.id) {
@@ -80,12 +103,13 @@ export async function updateItemQuantity(
             id: lineItem.id,
             merchandiseId,
             quantity,
+            sellingPlanId,
           },
         ]);
       }
     } else if (quantity > 0) {
       // If the item doesn't exist in the cart and quantity > 0, add it
-      await addToCart([{ merchandiseId, quantity }]);
+      await addToCart([{ merchandiseId, quantity, sellingPlanId }]);
     }
 
     updateTag(TAGS.cart);

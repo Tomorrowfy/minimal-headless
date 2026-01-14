@@ -5,6 +5,7 @@ import type {
   CartItem,
   Product,
   ProductVariant,
+  SellingPlan,
 } from "lib/shopify/types";
 import React, {
   createContext,
@@ -19,11 +20,19 @@ type UpdateType = "plus" | "minus" | "delete";
 type CartAction =
   | {
       type: "UPDATE_ITEM";
-      payload: { merchandiseId: string; updateType: UpdateType };
+      payload: {
+        merchandiseId: string;
+        updateType: UpdateType;
+        sellingPlanId?: string | null;
+      };
     }
   | {
       type: "ADD_ITEM";
-      payload: { variant: ProductVariant; product: Product };
+      payload: {
+        variant: ProductVariant;
+        product: Product;
+        sellingPlan?: SellingPlan | null;
+      };
     };
 
 type CartContextType = {
@@ -69,6 +78,7 @@ function createOrUpdateCartItem(
   existingItem: CartItem | undefined,
   variant: ProductVariant,
   product: Product,
+  sellingPlan?: SellingPlan | null,
 ): CartItem {
   const quantity = existingItem ? existingItem.quantity + 1 : 1;
   const totalAmount = calculateItemCost(quantity, variant.price.amount);
@@ -82,9 +92,13 @@ function createOrUpdateCartItem(
         currencyCode: variant.price.currencyCode,
       },
     },
+    sellingPlanAllocation: sellingPlan
+      ? { sellingPlan: { id: sellingPlan.id, name: sellingPlan.name } }
+      : null,
     merchandise: {
       id: variant.id,
       title: variant.title,
+      price: variant.price,
       selectedOptions: variant.selectedOptions,
       product: {
         id: product.id,
@@ -132,13 +146,22 @@ function createEmptyCart(): Cart {
 
 function cartReducer(state: Cart | undefined, action: CartAction): Cart {
   const currentCart = state || createEmptyCart();
+  const getSellingPlanId = (item: CartItem) =>
+    item.sellingPlanAllocation?.sellingPlan.id ?? null;
+  const matchesItem = (
+    item: CartItem,
+    merchandiseId: string,
+    sellingPlanId?: string | null,
+  ) =>
+    item.merchandise.id === merchandiseId &&
+    getSellingPlanId(item) === (sellingPlanId ?? null);
 
   switch (action.type) {
     case "UPDATE_ITEM": {
-      const { merchandiseId, updateType } = action.payload;
+      const { merchandiseId, updateType, sellingPlanId } = action.payload;
       const updatedLines = currentCart.lines
         .map((item) =>
-          item.merchandise.id === merchandiseId
+          matchesItem(item, merchandiseId, sellingPlanId)
             ? updateCartItem(item, updateType)
             : item,
         )
@@ -163,19 +186,23 @@ function cartReducer(state: Cart | undefined, action: CartAction): Cart {
       };
     }
     case "ADD_ITEM": {
-      const { variant, product } = action.payload;
+      const { variant, product, sellingPlan } = action.payload;
       const existingItem = currentCart.lines.find(
-        (item) => item.merchandise.id === variant.id,
+        (item) =>
+          matchesItem(item, variant.id, sellingPlan?.id ?? null),
       );
       const updatedItem = createOrUpdateCartItem(
         existingItem,
         variant,
         product,
+        sellingPlan,
       );
 
       const updatedLines = existingItem
         ? currentCart.lines.map((item) =>
-            item.merchandise.id === variant.id ? updatedItem : item,
+            matchesItem(item, variant.id, sellingPlan?.id ?? null)
+              ? updatedItem
+              : item,
           )
         : [...currentCart.lines, updatedItem];
 
@@ -216,21 +243,32 @@ export function useCart() {
     cartReducer,
   );
 
-  const updateCartItem = (merchandiseId: string, updateType: UpdateType) => {
+  const updateCartItemWithPlan = (
+    merchandiseId: string,
+    updateType: UpdateType,
+    sellingPlanId?: string | null,
+  ) => {
     updateOptimisticCart({
       type: "UPDATE_ITEM",
-      payload: { merchandiseId, updateType },
+      payload: { merchandiseId, updateType, sellingPlanId },
     });
   };
 
-  const addCartItem = (variant: ProductVariant, product: Product) => {
-    updateOptimisticCart({ type: "ADD_ITEM", payload: { variant, product } });
+  const addCartItem = (
+    variant: ProductVariant,
+    product: Product,
+    sellingPlan?: SellingPlan | null,
+  ) => {
+    updateOptimisticCart({
+      type: "ADD_ITEM",
+      payload: { variant, product, sellingPlan },
+    });
   };
 
   return useMemo(
     () => ({
       cart: optimisticCart,
-      updateCartItem,
+      updateCartItem: updateCartItemWithPlan,
       addCartItem,
     }),
     [optimisticCart],
