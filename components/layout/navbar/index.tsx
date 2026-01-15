@@ -1,3 +1,5 @@
+import { getCustomerInfo } from "@/lib/customer/session";
+import { UserIcon } from "@heroicons/react/24/outline";
 import CartModal from "components/cart/modal";
 import LogoSquare from "components/logo-square";
 import { getMenu } from "lib/shopify";
@@ -11,6 +13,8 @@ const { SITE_NAME } = process.env;
 
 export async function Navbar() {
   const menu = await getMenu("next-js-frontend-header-menu");
+
+  const session = await getCustomerInfo();
 
   return (
     <nav className="relative flex items-center justify-between p-4 lg:px-6">
@@ -52,7 +56,19 @@ export async function Navbar() {
             <Search />
           </Suspense>
         </div>
-        <div className="flex justify-end md:w-1/3">
+
+        <div className="flex justify-end md:w-1/3 gap-2">
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white">
+            {session ? (
+              <Link href="/account">
+                <UserIcon className="h-4 transition-all ease-in-out hover:scale-110" />
+              </Link>
+            ) : (
+              <Link href="/login">
+                <UserIcon className="h-4 transition-all ease-in-out hover:scale-110" />
+              </Link>
+            )}
+          </div>
           <CartModal />
         </div>
       </div>
