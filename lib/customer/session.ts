@@ -44,11 +44,11 @@ export const setCustomerSession = async ({
     typeof expiresInSeconds === "number"
       ? expiresInSeconds
       : expiresAt
-      ? Math.max(
-          0,
-          Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
-        )
-      : DEFAULT_MAX_AGE;
+        ? Math.max(
+            0,
+            Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
+          )
+        : DEFAULT_MAX_AGE;
 
   cookieStore.set(
     CUSTOMER_ACCESS_TOKEN_COOKIE,
@@ -122,7 +122,7 @@ export const decodeCustomerIDToken = (token: string) => {
   }
 };
 
-export const setEversubsStorefrontToken = async (token: string) => {
+export const setEverSubsStorefrontTokenCookie = async (token: string) => {
   const cookieStore = await cookies();
   cookieStore.set(EVERSUBS_STOREFRONT_TOKEN_COOKIE, token, {
     path: "/",
@@ -132,7 +132,7 @@ export const setEversubsStorefrontToken = async (token: string) => {
   });
 };
 
-export const getEversubsStorefrontToken = async () => {
+export const getEverSubsStorefrontTokenCookie = async () => {
   const cookieStore = await cookies();
   return cookieStore.get(EVERSUBS_STOREFRONT_TOKEN_COOKIE)?.value ?? null;
 };

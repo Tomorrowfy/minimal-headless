@@ -11,9 +11,9 @@ import {
   decodeCustomerIDToken,
   setCustomerIdToken,
   setCustomerSession,
-  setEversubsStorefrontToken,
+  setEverSubsStorefrontTokenCookie,
 } from "@/lib/customer/session";
-import { getStorefrontToken } from "@/lib/eversubs/merchant/get-storefront-token";
+import { fetchStorefrontToken } from "@/lib/eversubs/merchant/fetch-storefront-token";
 
 const DEFAULT_REDIRECT_PATH = "/";
 const ERROR_MESSAGE =
@@ -123,14 +123,14 @@ export async function GET(request: Request) {
 
       if (decoded?.sub) {
         try {
-          const eversubsStorefrontToken = await getStorefrontToken(
+          const eversubsStorefrontToken = await fetchStorefrontToken(
             process.env.NEXT_PUBLIC_STORE_NAME!,
             `gid://shopify/Customer/${decoded.sub}`
           );
 
           console.log({ eversubsStorefrontToken });
 
-          await setEversubsStorefrontToken(eversubsStorefrontToken.token);
+          await setEverSubsStorefrontTokenCookie(eversubsStorefrontToken.token);
         } catch (e) {
           console.error(e);
         }

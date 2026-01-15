@@ -1,22 +1,30 @@
-import { getEversubsStorefrontToken } from "@/lib/customer/session";
-import {} from "./types";
-import { CreateStorefrontTokenResponse } from "../merchant/types";
+import {
+  getCustomerInfo,
+  getEverSubsStorefrontTokenCookie,
+  setEverSubsStorefrontTokenCookie,
+} from "@/lib/customer/session";
+import { fetchStorefrontToken } from "../merchant/fetch-storefront-token";
 
 export const getToken = async () => {
-  const storedToken = await getEversubsStorefrontToken();
+  const storedToken = await getEverSubsStorefrontTokenCookie();
 
   if (storedToken) {
     return storedToken;
   }
 
-  const updatedToken = await fetch("/account/eversubs/get-storefront-token", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const customerInfo = await getCustomerInfo();
 
-  const data = (await updatedToken.json()) as CreateStorefrontTokenResponse;
+  const tokenData = await fetchStorefrontToken(
+    process.env.NEXT_PUBLIC_STORE_NAME!,
+    `gid://shopify/Customer/${customerInfo?.sub}`
+  );
 
-  return data.token;
+  try {
+    // need a try-catch block here
+    // because if the function will be called from the RSC
+    // then it will throw an error: cannot set cookies in RSC
+    await setEverSubsStorefrontTokenCookie(tokenData.token);
+  } catch {}
+
+  return tokenData.token;
 };

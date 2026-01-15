@@ -1,4 +1,4 @@
-import { SubscriptionContractFull } from "@/lib/eversubs/storefront/types";
+import { Subscriptions } from "@/lib/eversubs/storefront/get-subscriptions";
 
 export type CustomerInfo = {
   email?: string;
@@ -88,14 +88,14 @@ export const formatInterval = (
 };
 
 export const resolveSubscriptionTitle = (
-  subscription: SubscriptionContractFull
+  subscription: Subscriptions[number]
 ) => {
   const firstLine = subscription.lines?.[0];
 
   return firstLine?.title || "Subscription";
 };
 
-export const formatPaymentMethod = (subscription: SubscriptionContractFull) => {
+export const formatPaymentMethod = (subscription: Subscriptions[number]) => {
   const instrument = subscription.customer_payment_method?.instrument;
 
   if (!instrument) {

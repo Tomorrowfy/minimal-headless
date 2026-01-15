@@ -1,32 +1,16 @@
-import { getCustomerInfo } from "@/lib/customer/session";
-import { getToken } from "./get-token";
-import { Subscriptions } from "./types";
+import { getEversubsStorefrontClient } from "./client";
 
 export const getSubscriptions = async () => {
-  const customerInfo = await getCustomerInfo();
+  const storefrontClient = await getEversubsStorefrontClient();
 
-  if (!customerInfo?.sub) {
-    return [];
+  const response = await storefrontClient.GET("/v1/subscriptions");
+
+  if (response.error) {
+    throw response.error;
   }
 
-  const token = await getToken();
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_EVERSUBS_STOREFRONT_API_URL}/v1/subscriptions`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Storefront-API-Token": token,
-      },
-    }
-  );
-
-  const data = (await response.json()) as {
-    subscriptions: Subscriptions;
-    next_cursor: "string";
-    message: "string";
-  };
-
-  return data.subscriptions;
+  return response.data.subscriptions;
 };
+
+export type SubscriptionsPromise = ReturnType<typeof getSubscriptions>;
+export type Subscriptions = Awaited<SubscriptionsPromise>;

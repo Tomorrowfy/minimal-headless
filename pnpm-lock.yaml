@@ -26,6 +26,9 @@ importers:
       next:
         specifier: 15.6.0-canary.60
         version: 15.6.0-canary.60(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      openapi-fetch:
+        specifier: ^0.15.0
+        version: 0.15.0
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -632,6 +635,12 @@ packages:
         optional: true
       sass:
         optional: true
+
+  openapi-fetch@0.15.0:
+    resolution: {integrity: sha512-OjQUdi61WO4HYhr9+byCPMj0+bgste/LtSBEcV6FzDdONTs7x0fWn8/ndoYwzqCsKWIxEZwo4FN/TG1c1rI8IQ==}
+
+  openapi-typescript-helpers@0.0.15:
+    resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -1250,6 +1259,12 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+
+  openapi-fetch@0.15.0:
+    dependencies:
+      openapi-typescript-helpers: 0.0.15
+
+  openapi-typescript-helpers@0.0.15: {}
 
   picocolors@1.1.1: {}
 
