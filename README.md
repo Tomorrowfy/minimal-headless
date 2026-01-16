@@ -1,75 +1,152 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fcommerce&project-name=commerce&repo-name=commerce&demo-title=Next.js%20Commerce&demo-url=https%3A%2F%2Fdemo.vercel.store&demo-image=https%3A%2F%2Fbigcommerce-demo-asset-ksvtgfvnd.vercel.app%2Fbigcommerce.png&env=COMPANY_NAME,SHOPIFY_REVALIDATION_SECRET,SHOPIFY_STORE_DOMAIN,SHOPIFY_STOREFRONT_ACCESS_TOKEN,SITE_NAME)
+# Developer and Operator Guide
 
-# Next.js Commerce
+This document covers setup for developers and store operators who need to run
+the headless app, enable Eversubs, and make Merchant/Storefront API calls.
 
-A high-performance, server-rendered Next.js App Router ecommerce application.
+## Quickstart (local development)
 
-This template uses React Server Components, Server Actions, `Suspense`, `useOptimistic`, and more.
-
-<h3 id="v1-note"></h3>
-
-> Note: Looking for Next.js Commerce v1? View the [code](https://github.com/vercel/commerce/tree/v1), [demo](https://commerce-v1.vercel.store), and [release notes](https://github.com/vercel/commerce/releases/tag/v1).
-
-## Providers
-
-Vercel will only be actively maintaining a Shopify version [as outlined in our vision and strategy for Next.js Commerce](https://github.com/vercel/commerce/pull/966).
-
-Vercel is happy to partner and work with any commerce provider to help them get a similar template up and running and listed below. Alternative providers should be able to fork this repository and swap out the `lib/shopify` file with their own implementation while leaving the rest of the template mostly unchanged.
-
-- Shopify (this repository)
-- [BigCommerce](https://github.com/bigcommerce/nextjs-commerce) ([Demo](https://next-commerce-v2.vercel.app/))
-- [Ecwid by Lightspeed](https://github.com/Ecwid/ecwid-nextjs-commerce/) ([Demo](https://ecwid-nextjs-commerce.vercel.app/))
-- [Geins](https://github.com/geins-io/vercel-nextjs-commerce) ([Demo](https://geins-nextjs-commerce-starter.vercel.app/))
-- [Medusa](https://github.com/medusajs/vercel-commerce) ([Demo](https://medusa-nextjs-commerce.vercel.app/))
-- [Prodigy Commerce](https://github.com/prodigycommerce/nextjs-commerce) ([Demo](https://prodigy-nextjs-commerce.vercel.app/))
-- [Saleor](https://github.com/saleor/nextjs-commerce) ([Demo](https://saleor-commerce.vercel.app/))
-- [Shopware](https://github.com/shopwareLabs/vercel-commerce) ([Demo](https://shopware-vercel-commerce-react.vercel.app/))
-- [Swell](https://github.com/swellstores/verswell-commerce) ([Demo](https://verswell-commerce.vercel.app/))
-- [Umbraco](https://github.com/umbraco/Umbraco.VercelCommerce.Demo) ([Demo](https://vercel-commerce-demo.umbraco.com/))
-- [Wix](https://github.com/wix/headless-templates/tree/main/nextjs/commerce) ([Demo](https://wix-nextjs-commerce.vercel.app/))
-- [Fourthwall](https://github.com/FourthwallHQ/vercel-commerce) ([Demo](https://vercel-storefront.fourthwall.app/))
-
-> Note: Providers, if you are looking to use similar products for your demo, you can [download these assets](https://drive.google.com/file/d/1q_bKerjrwZgHwCw0ovfUMW6He9VtepO_/view?usp=sharing).
-
-## Integrations
-
-Integrations enable upgraded or additional functionality for Next.js Commerce
-
-- [Orama](https://github.com/oramasearch/nextjs-commerce) ([Demo](https://vercel-commerce.oramasearch.com/))
-
-  - Upgrades search to include typeahead with dynamic re-rendering, vector-based similarity search, and JS-based configuration.
-  - Search runs entirely in the browser for smaller catalogs or on a CDN for larger.
-
-- [React Bricks](https://github.com/ReactBricks/nextjs-commerce-rb) ([Demo](https://nextjs-commerce.reactbricks.com/))
-  - Edit pages, product details, and footer content visually using [React Bricks](https://www.reactbricks.com) visual headless CMS.
-
-## Running locally
-
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js Commerce. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
-
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Shopify store.
-
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+1. Install dependencies:
 
 ```bash
 pnpm install
+```
+
+2. Create a `.env` file based on `.env.example` and fill in required values.
+
+3. Start the dev server:
+
+```bash
 pnpm dev
 ```
 
-Your app should now be running on [localhost:3000](http://localhost:3000/).
+The app runs on `http://localhost:3000`.
 
-<details>
-  <summary>Expand if you work at Vercel and want to run locally and / or contribute</summary>
+## Environment variables
 
-1. Run `vc link`.
-1. Select the `Vercel Solutions` scope.
-1. Connect to the existing `commerce-shopify` project.
-1. Run `vc env pull` to get environment variables.
-1. Run `pnpm dev` to ensure everything is working correctly.
-</details>
+### Core Shopify storefront
 
-## Vercel, Next.js Commerce, and Shopify Integration Guide
+Required for the storefront to work:
 
-You can use this comprehensive [integration guide](https://vercel.com/docs/integrations/ecommerce/shopify) with step-by-step instructions on how to configure Shopify as a headless CMS using Next.js Commerce as your headless Shopify storefront on Vercel.
+- `SHOPIFY_STORE_DOMAIN`: your Shopify domain (e.g. `your-store.myshopify.com`).
+- `SHOPIFY_STOREFRONT_ACCESS_TOKEN`: Storefront API token.
+- `SITE_NAME`, `COMPANY_NAME`: UI labels.
+- `SHOPIFY_REVALIDATION_SECRET`: used for on-demand revalidation (optional in
+  local dev but recommended in production).
+
+### Customer account login (optional)
+
+Required if you want customer login and account pages:
+
+- `NEXT_PUBLIC_APP_URL`: public https URL of this app (required by OAuth).
+- `NEXT_PUBLIC_HEADLESS_ID`: OAuth client id for Customer Accounts.
+- `SHOPIFY_CUSTOMER_ACCOUNT_AUTH_URL`: OAuth authorization endpoint.
+- `SHOPIFY_CUSTOMER_ACCOUNT_TOKEN_URL`: OAuth token endpoint.
+- `SHOPIFY_CUSTOMER_ACCOUNT_GRAPHQL_URL`: Customer Account API GraphQL endpoint.
+- `SHOPIFY_CUSTOMER_ACCOUNT_SCOPE`: OAuth scope (for example:
+  `openid email customer-account-api:full`).
+- `SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_SECRET`: required for confidential OAuth
+  clients (if applicable).
+
+Optional:
+
+- `SHOPIFY_CUSTOMER_ACCOUNT_LOGOUT_URL`: logout endpoint for redirecting users
+  after sign out.
+
+### Eversubs integration
+
+Required for subscription management and storefront API calls:
+
+- `EVERSUBS_MERCHANT_API_URL`: Merchant API base URL.
+- `EVERSUBS_MERCHANT_API_KEY`: Merchant API key.
+- `NEXT_PUBLIC_EVERSUBS_STOREFRONT_API_URL`: Storefront API base URL.
+- `NEXT_PUBLIC_STORE_NAME`: Eversubs store name (used when minting storefront
+  tokens).
+
+#### Getting a Merchant API key
+
+1. Log in to your Shopify admin.
+2. Go to Eversubs -> Settings -> API & access.
+3. In the "Tokens" section, click "Create" in the "Merchant API Keys" block.
+4. Copy the key and set it as `EVERSUBS_MERCHANT_API_KEY`.
+
+## Running in production
+
+Build and run:
+
+```bash
+pnpm build
+pnpm start
+```
+
+Set all environment variables in your hosting provider (Vercel or equivalent).
+
+## Enabling Eversubs
+
+1. Add the Eversubs environment variables (see above).
+2. Ensure customer login is configured, because Eversubs tokens are minted after
+   a customer authenticates.
+3. The login callback (`app/account/callback/route.ts`) requests a storefront
+   token via the Merchant API and stores it in a secure cookie. Subsequent
+   storefront API calls reuse this token.
+
+## Making Eversubs API calls
+
+### Merchant API
+
+Use `lib/eversubs/merchant/client.ts` to call Merchant endpoints:
+
+```ts
+import { getEversubsMerchantClient } from "@/lib/eversubs/merchant/client";
+
+export const fetchStorefrontToken = async (store: string, customerId: string) => {
+  const client = await getEversubsMerchantClient();
+  const response = await client.POST("/v1/customers/storefront-tokens", {
+    body: { customer_id: customerId, store },
+  });
+
+  if (response.error) throw response.error;
+  return response.data;
+};
+```
+
+### Storefront API (server-side with customer token)
+
+Use `lib/eversubs/storefront/client.ts` to call Storefront endpoints. The client
+adds the `X-Storefront-API-Token` header from the cookie or by minting a token
+via the Merchant API:
+
+```ts
+import { getEversubsStorefrontClient } from "@/lib/eversubs/storefront/client";
+
+export const getSubscriptions = async () => {
+  const client = await getEversubsStorefrontClient();
+  const response = await client.GET("/v1/subscriptions");
+
+  if (response.error) throw response.error;
+  return response.data.subscriptions;
+};
+```
+
+### Updating API types
+
+The OpenAPI schemas live in:
+
+- `lib/eversubs/merchant/schema.ts`
+- `lib/eversubs/storefront/schema.ts`
+
+These OpenAPI-generated schemas give you fully typed responses for every call
+made through the Eversubs clients.
+
+Regenerate types when the APIs change:
+
+```bash
+pnpm codegen:merchant
+pnpm codegen:storefront
+```
+
+These scripts download schemas, so they require network access.
+
+## API documentation
+
+- Storefront API: `https://storefront-api.eversubs.tomorrowfy.com/redoc`
+- Merchant API: `https://merchant-api.eversubs.tomorrowfy.com/redoc`

@@ -11,7 +11,7 @@ import {
   decodeCustomerIDToken,
   setCustomerIdToken,
   setCustomerSession,
-  setEverSubsStorefrontTokenCookie,
+  setEversubsStorefrontTokenCookie,
 } from "@/lib/customer/session";
 import { fetchStorefrontToken } from "@/lib/eversubs/merchant/fetch-storefront-token";
 
@@ -130,7 +130,7 @@ export async function GET(request: Request) {
 
           console.log({ eversubsStorefrontToken });
 
-          await setEverSubsStorefrontTokenCookie(eversubsStorefrontToken.token);
+          await setEversubsStorefrontTokenCookie(eversubsStorefrontToken.token);
         } catch (e) {
           console.error(e);
         }

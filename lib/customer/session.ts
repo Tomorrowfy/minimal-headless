@@ -122,7 +122,7 @@ export const decodeCustomerIDToken = (token: string) => {
   }
 };
 
-export const setEverSubsStorefrontTokenCookie = async (token: string) => {
+export const setEversubsStorefrontTokenCookie = async (token: string) => {
   const cookieStore = await cookies();
   cookieStore.set(EVERSUBS_STOREFRONT_TOKEN_COOKIE, token, {
     path: "/",
@@ -132,7 +132,7 @@ export const setEverSubsStorefrontTokenCookie = async (token: string) => {
   });
 };
 
-export const getEverSubsStorefrontTokenCookie = async () => {
+export const getEversubsStorefrontTokenCookie = async () => {
   const cookieStore = await cookies();
   return cookieStore.get(EVERSUBS_STOREFRONT_TOKEN_COOKIE)?.value ?? null;
 };

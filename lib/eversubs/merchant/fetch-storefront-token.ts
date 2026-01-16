@@ -1,10 +1,10 @@
-import { getEverSubsMerchantClient } from "./client";
+import { getEversubsMerchantClient } from "./client";
 
 export const fetchStorefrontToken = async (
   store: string,
   customerId: string
 ) => {
-  const merchantClient = await getEverSubsMerchantClient();
+  const merchantClient = await getEversubsMerchantClient();
 
   const response = await merchantClient.POST(
     "/v1/customers/storefront-tokens",

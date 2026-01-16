@@ -1,12 +1,12 @@
 import {
   getCustomerInfo,
-  getEverSubsStorefrontTokenCookie,
-  setEverSubsStorefrontTokenCookie,
+  getEversubsStorefrontTokenCookie,
+  setEversubsStorefrontTokenCookie,
 } from "@/lib/customer/session";
 import { fetchStorefrontToken } from "../merchant/fetch-storefront-token";
 
 export const getToken = async () => {
-  const storedToken = await getEverSubsStorefrontTokenCookie();
+  const storedToken = await getEversubsStorefrontTokenCookie();
 
   if (storedToken) {
     return storedToken;
@@ -23,7 +23,7 @@ export const getToken = async () => {
     // need a try-catch block here
     // because if the function will be called from the RSC
     // then it will throw an error: cannot set cookies in RSC
-    await setEverSubsStorefrontTokenCookie(tokenData.token);
+    await setEversubsStorefrontTokenCookie(tokenData.token);
   } catch {}
 
   return tokenData.token;

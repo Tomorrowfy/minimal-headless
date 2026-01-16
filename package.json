@@ -6,7 +6,9 @@
     "start": "next start",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
-    "test": "pnpm prettier:check"
+    "test": "pnpm prettier:check",
+    "codegen:merchant": "pnpm dlx openapi-typescript https://merchant-api.eversubs.tomorrowfy.com/openapi.json -o ./lib/eversubs/merchant/schema.ts",
+    "codegen:storefront": "pnpm dlx openapi-typescript https://storefront-api.eversubs.tomorrowfy.com/openapi.json -o ./lib/eversubs/storefront/schema.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",

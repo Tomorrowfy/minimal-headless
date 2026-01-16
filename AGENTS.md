@@ -3,7 +3,7 @@
 ## Project Structure & Module Organization
 - `app/` contains the Next.js App Router routes, layouts, and page-level UI (e.g., `app/page.tsx`, `app/product/`, `app/api/`).
 - `components/` holds reusable UI pieces organized by feature (`components/product/`, `components/cart/`, `components/layout/`).
-- `lib/` is for shared utilities and data access (`lib/shopify/`, `lib/utils.ts`, `lib/constants.ts`).
+- `lib/` is for shared utilities and data access (`lib/shopify/`, `lib/eversubs/`, `lib/storefront/`, `lib/utils.ts`, `lib/constants.ts`).
 - `fonts/` stores local font assets. Global styles live in `app/globals.css`.
 
 ## Build, Test, and Development Commands
@@ -12,6 +12,7 @@
 - `pnpm start`: start the production server from the build output.
 - `pnpm test`: run formatting checks (see Testing Guidelines).
 - `pnpm prettier` / `pnpm prettier:check`: format or verify formatting across the repo.
+- `pnpm codegen:merchant` / `pnpm codegen:storefront`: regenerate OpenAPI client types under `lib/merchant/` and `lib/storefront/`.
 
 ## Coding Style & Naming Conventions
 - Use TypeScript for all React components and utilities.
