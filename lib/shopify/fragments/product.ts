@@ -45,6 +45,7 @@ const productFragment = /* GraphQL */ `
       edges {
         node {
           name
+          appName
           sellingPlans(first: 10) {
             edges {
               node {

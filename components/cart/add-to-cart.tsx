@@ -9,6 +9,8 @@ import { useSearchParams } from "next/navigation";
 import { useActionState, useMemo, useState } from "react";
 import { useCart } from "./cart-context";
 
+const EVERSUBS_APP_ID = "275615350785";
+
 function SubmitButton({
   availableForSale,
   selectedVariantId,
@@ -84,7 +86,9 @@ export function AddToCart({ product }: { product: Product }) {
   const baseVariant = finalVariant ?? variants[0];
   const sellingPlans = useMemo(
     () =>
-      product.sellingPlanGroups.flatMap((group) => group.sellingPlans ?? []),
+      product.sellingPlanGroups
+        .filter((g) => g.appName === EVERSUBS_APP_ID)
+        .flatMap((group) => group.sellingPlans ?? []),
     [product.sellingPlanGroups]
   );
   const selectedSellingPlan =
@@ -132,6 +136,7 @@ export function AddToCart({ product }: { product: Product }) {
 
     return sellingPlans.map((plan) => {
       const pricing = computePriceForPlan(plan);
+
       return {
         id: plan.id,
         name: plan.name,

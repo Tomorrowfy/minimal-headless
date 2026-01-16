@@ -1,7 +1,6 @@
-# Developer and Operator Guide
+# Developer Guide
 
-This document covers setup for developers and store operators who need to run
-the headless app, enable Eversubs, and make Merchant/Storefront API calls.
+This document covers setup for developers  who need to run the headless app, enable Eversubs, and make Merchant/Storefront API calls.
 
 ## Quickstart (local development)
 

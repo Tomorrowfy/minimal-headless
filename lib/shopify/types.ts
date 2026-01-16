@@ -166,6 +166,7 @@ export type SellingPlan = {
 
 export type SellingPlanGroup = {
   name: string;
+  appName: string;
   sellingPlans: SellingPlan[];
 };
 
