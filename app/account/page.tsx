@@ -1,10 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCustomerInfo } from "@/lib/customer/session";
 import { getSubscriptions } from "@/lib/eversubs/storefront/get-subscriptions";
 import { Suspense } from "react";
-import { ACCOUNT_PORTAL_URL, CustomerInfo, formatUnixSeconds } from "./lib";
+import { CustomerInfo, formatUnixSeconds } from "./lib";
 import { Subscriptions, SubscriptionSkeleton } from "./Subscriptions";
 
 export default async function AccountPage() {
@@ -150,18 +149,12 @@ export default async function AccountPage() {
         </section>
 
         <div className="flex flex-wrap gap-3">
-          <Link
-            href={ACCOUNT_PORTAL_URL}
-            className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-neutral-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-neutral-800 dark:border-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200"
-          >
-            Manage account on Shopify
-          </Link>
-          <Link
+          <a
             href="/logout"
             className="inline-flex items-center justify-center rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-600 dark:hover:bg-neutral-800"
           >
             Sign out
-          </Link>
+          </a>
         </div>
       </main>
     </div>
