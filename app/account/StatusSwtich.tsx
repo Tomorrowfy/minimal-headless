@@ -22,6 +22,14 @@ export const StatusSwtich: FC<StatusSwtichProps> = (props) => {
   const [realStatus, setRealStatus] = useState(props.status);
   const [optimisticStatus, setStatusOptimistically] = useOptimistic(realStatus);
 
+  if (optimisticStatus.toLowerCase() === "cancelled") {
+    return (
+      <div className="inline-flex gap-2 items-center cursor-pointer border border-neutral-200 bg-amber-200 px-3 py-1 text-xs font-medium uppercase tracking-wide text-neutral-600 dark:border-neutral-700 dark:bg-amber-800 dark:text-neutral-300">
+        Cancelled
+      </div>
+    );
+  }
+
   return (
     <div className="inline-flex">
       {["active", "paused"].map((status) => (
@@ -35,7 +43,7 @@ export const StatusSwtich: FC<StatusSwtichProps> = (props) => {
             {
               "!bg-blue-50":
                 status.toLowerCase() === optimisticStatus.toLowerCase(),
-            }
+            },
           )}
           onClick={async () => {
             startTransition(async () => {
@@ -43,14 +51,14 @@ export const StatusSwtich: FC<StatusSwtichProps> = (props) => {
 
               if (status === "active") {
                 const reactivatedSub = await reactivateSubscription(
-                  props.subscriptionId
+                  props.subscriptionId,
                 );
 
                 setRealStatus((s) => reactivatedSub.status ?? s);
               } else {
                 const cancelledSub = await cancelSubscription(
                   props.subscriptionId,
-                  "other"
+                  "other",
                 );
 
                 setRealStatus((s) => cancelledSub.status ?? s);
