@@ -24,7 +24,7 @@ export const StatusSwtich: FC<StatusSwtichProps> = (props) => {
 
   if (optimisticStatus.toLowerCase() === "cancelled") {
     return (
-      <div className="inline-flex gap-2 items-center cursor-pointer border border-neutral-200 bg-amber-200 px-3 py-1 text-xs font-medium uppercase tracking-wide text-neutral-600 dark:border-neutral-700 dark:bg-amber-800 dark:text-neutral-300">
+      <div className="inline-flex rounded-full gap-2 items-center cursor-pointer border border-neutral-200 bg-amber-200 px-3 py-1 text-xs font-medium uppercase tracking-wide text-neutral-600 dark:border-neutral-700 dark:bg-amber-800 dark:text-neutral-300">
         Cancelled
       </div>
     );
